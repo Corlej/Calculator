@@ -1,0 +1,85 @@
+body {
+    display: flex;
+    background-color: silver;
+    justify-content: center;
+}
+
+.calculator-body {
+    height: auto;
+    width: 60vw;
+    border: solid;
+    border-width: 1px;
+    border-color: #222222;
+    background-color: #222222;
+    border-radius: 25px;
+
+}
+
+#currentDisplay {
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: center;
+    height: 18vw;
+    margin: 2vw 2vw 0vw 0vw;
+    font-family: 'Work Sans', sans-serif;
+    font-weight: 200;
+    font-size: 13vw;
+    color: #EEEEEE;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: 25% 25% 25% 25%;
+}
+
+.btn,
+.numberBtn {
+    border: solid;
+    justify-content: space-evenly;
+    height: 12.5vw;
+    width: 15vw;
+    font-size: 5vw;
+    border-color: #222222;
+    border-width: 1px;
+    background-color: #696969;
+    color: #EEEEEE;
+}
+
+.top-button {
+    background-color: #383838;
+}
+
+.right-button {
+    background-color: #ffa114;
+}
+
+.double-size {
+    width: 30vw;
+}
+
+.grid-skip {
+    grid-column: 3;
+}
+
+.bottom-left-corner {
+    border-radius: 0px 0px 0px 25px;
+}
+
+.bottom-right-corner {
+    border-radius: 0px 0px 25px 0px;
+}
+
+.numberClicked {
+    animation-name: numberClicked;
+    animation-duration: 150ms;
+}
+
+@keyframes numberClicked {
+    0% {background: white; opacity: 50%;}
+}
+
+.operatorClicked {
+    border-top: solid;
+    border-color: #222222;
+    border-width: 4px;
+}
