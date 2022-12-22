@@ -1,277 +1,363 @@
-let firstOperand = ''
-let secondOperand = ''
-let currentOperation = null
-let resetDisplay = false
-let buttonglow
+let firstNumber = "0";
+let secondNumber = "0";
+let result = "0";
+let currentOperator;
+let currentOperatorKey;
+let evaluation = [];
+const screen = document.querySelector(".screen");
+const keyboard = document.querySelector(".keyboard");
 
-const modifierBtn = document.querySelectorAll('[data-modifier]')
-const numberBtn = document.querySelectorAll('[data-number]')
-const operatorBtn = document.querySelectorAll('[data-operator]')
-const decimalBtn = document.getElementById('decimalBtn')
-const equalBtn = document.getElementById('equalBtn')
-const dataEqualBtn = document.querySelectorAll('[data-equal]')
-const clearBtn = document.getElementById('clearBtn')
-const clearAllBtn = document.getElementById('clearAllBtn')
-const plusMinus = document.getElementById('plusMinus')
-const percentage = document.getElementById('percentage')
-const currentDisplay = document.getElementById('currentDisplay')
-const btn = document.getElementsByClassName('btn')
-
-
-window.addEventListener('keydown', keyboardInput)
-equalBtn.addEventListener('click', findTotal)
-clearBtn.addEventListener('click', clearCurrent)
-decimalBtn.addEventListener('click', decimal)
-
-
-numberBtn.forEach((button) => 
-    button.addEventListener('click', () => inputNumber((button.innerText), (button.classList.add('numberClicked'), setTimeout(function () {
-        button.classList.remove('numberClicked');
-    }, 100))
-    ))
-)
-
-operatorBtn.forEach((button) => 
-    button.addEventListener('click', () => (button.classList.add('numberClicked'), setTimeout(function () {
-        button.classList.remove('numberClicked');
-    }, 100), ($(operatorBtn).removeClass('operatorClicked')),(button.classList.add('operatorClicked'))
-    ))
-)
-
-modifierBtn.forEach((button) => 
-    button.addEventListener('click', () => (button.classList.add('numberClicked'), setTimeout(function () {
-        button.classList.remove('numberClicked');
-    }, 100)))
-)
-
-dataEqualBtn.forEach((button) => 
-    button.addEventListener('click', () => (button.classList.add('numberClicked'), setTimeout(function () {
-        button.classList.remove('numberClicked');
-    }, 100), ($(operatorBtn).removeClass('operatorClicked'))
-    ))
-);
-
-decimalBtn.addEventListener('click', () => (decimalBtn.classList.add('numberClicked'), setTimeout(function () {
-    decimalBtn.classList.remove('numberClicked');
-}, 100)));
-
-clearBtn.addEventListener('click', () => ($(operatorBtn).removeClass('operatorClicked')));
-
-$(document).keydown(function(e) {
-    if (e.which ==  49){
-        $('.one').addClass('numberClicked'), setTimeout(function () {
-            $('.one').removeClass('numberClicked');
-        }, 100)
-    }
-    if (e.which ==  50){
-        $('.two').addClass('numberClicked'), setTimeout(function () {
-            $('.two').removeClass('numberClicked');
-        }, 100)
-    }
-    if (e.which ==  51){
-        $('.three').addClass('numberClicked'), setTimeout(function () {
-            $('.three').removeClass('numberClicked');
-        }, 100)
-    }
-    if (e.which ==  52){
-        $('.four').addClass('numberClicked'), setTimeout(function () {
-            $('.four').removeClass('numberClicked');
-        }, 100)
-    }
-    if (e.which == 53){
-        if (e.shiftKey) {
-            $('.percentage').addClass('numberClicked'), setTimeout(function () {
-                $('.percentage').removeClass('numberClicked');
-            }, 100)
-        }
-        else {
-            $('.five').addClass('numberClicked'), setTimeout(function () {
-                $('.five').removeClass('numberClicked');
-            }, 100)
-        }
-    }    
-    if (e.which ==  54){
-        $('.six').addClass('numberClicked'), setTimeout(function () {
-            $('.six').removeClass('numberClicked');
-        }, 100)
-    }
-    if (e.which ==  55){
-        $('.seven').addClass('numberClicked'), setTimeout(function () {
-            $('.seven').removeClass('numberClicked');
-        }, 100)
-    }
-    if (e.which ==  56){
-        if (e.shiftKey) {
-            $('.multiply').addClass('numberClicked'), setTimeout(function () {
-                $('.multiply').removeClass('numberClicked');
-            }, 100), $('.multiply').addClass('operatorClicked')
-        }
-        else {
-            $('.eight').addClass('numberClicked'), setTimeout(function () {
-                $('.eight').removeClass('numberClicked');
-            }, 100)
-        }
-    }
-    if (e.which ==  57){
-        $('.nine').addClass('numberClicked'), setTimeout(function () {
-            $('.nine').removeClass('numberClicked');
-        }, 100)
-    }
-    if (e.which ==  48){
-        $('.zero').addClass('numberClicked'), setTimeout(function () {
-            $('.zero').removeClass('numberClicked');
-        }, 100)
-    }
-    if ((e.which == 27) || (e.which == 67)){
-        $('.clear').addClass('numberClicked'), setTimeout(function () {
-            $('.clear').removeClass('numberClicked');
-        }, 100)
-    }
-    if (e.which ==  189){
-        if (e.altKey) {
-            $('.plusMinus').addClass('numberClicked'), setTimeout(function () {
-                $('.plusMinus').removeClass('numberClicked');
-            }, 100)
-        }
-        else {
-            $('.subtract').addClass('numberClicked'), setTimeout(function () {
-                $('.subtract').removeClass('numberClicked');
-            }, 100), $('.subtract').addClass('operatorClicked')
-        }
-    }
-    if (e.which ==  191){
-        $('.divide').addClass('numberClicked'), setTimeout(function () {
-            $('.divide').removeClass('numberClicked');
-        }, 100), $('.divide').addClass('operatorClicked')
-    }
-    if (e.which == 88){
-        $('.multiply').addClass('numberClicked'), setTimeout(function () {
-            $('.multiply').removeClass('numberClicked');
-        }, 100), $('.multiply').addClass('operatorClicked')
-    }
-    if (e.which ==  187){
-        if (e.shiftKey) {
-            $('.add').addClass('numberClicked'), setTimeout(function () {
-                $('.add').removeClass('numberClicked');
-            }, 100), $('.add').addClass('operatorClicked')
-        }
-        else {$('.total').addClass('numberClicked'), setTimeout(function () {
-            $('.total').removeClass('numberClicked');
-            }, 100), $('.btn').removeClass('operatorClicked')
-        }
-    }
-    if (e.which ==  190){
-        $('.decimal').addClass('numberClicked'), setTimeout(function () {
-            $('.decimal').removeClass('numberClicked');
-        }, 100)
-    }
+keyboard.addEventListener('click', function(e) {
+    e.stopImmediatePropagation()
+    onButtonPress(e);
 });
 
 
-operatorBtn.forEach((button) => 
-    button.addEventListener('click', () => setOperator(button.innerText))
-
-);
-
-function inputNumber(number) {
-    if (currentDisplay.innerText === '0' || resetDisplay)
-    reset()
-    currentDisplay.innerText += number
-};
-   
-function reset() {
-    currentDisplay.innerText = ''
-    resetDisplay = false
-};
-
-function clearCurrent() {
-    currentDisplay.innerText = '0'
-    firstOperand = ''
-    secondOperand = ''
-    currentOperation = null
-};
-
-function decimal() {
-    if (resetDisplay) reset()
-    if (currentDisplay.innerText === '') currentDisplay.innerText = '0';
-    if (currentDisplay.innerText.includes('.')) return
-    currentDisplay.innerText += '.'
-};
-
-function deleteNumber() {
-    currentDisplay.innerText = currentDisplay.innerText.toString().slice(0, -1)
-};
-
-function setOperator(operator) {
-    if (currentDisplay !== null) findTotal()
-    firstOperand = currentDisplay.innerText
-    currentOperation = operator
-    resetDisplay = true
-};
-
-function findTotal() {
-    if (currentOperation === null || resetDisplay) return
-    if (currentOperation === '÷' && currentDisplay.innerText === '0') {
-        currentDisplay.innerText = 'Not a number'
-        return
-    }    
-    secondOperand = currentDisplay.innerText
-    currentDisplay.innerText = mathRound(
-        operate(currentOperation, firstOperand, secondOperand)
-    )
-    currentOperation = null
-};
-
-function mathRound(number) {
-    return Math.round(number * 10000000) / 10000000
-};
-
-function keyboardInput(e) {
-    if (e.key >= 0 && e.key <= 9) inputNumber(e.key)
-    if (e.key === '.') decimal()
-    if (e.key === '=' || e.key === 'Enter' || e.key === 'Return') findTotal()
-    if (e.key === 'Backspace' || e.key === 'Delete') deleteNumber()
-    if (e.key === 'Escape' || e.key === 'Esc' || e.key === 'c') clearCurrent()
-    if (e.key === '+' || e.key === '-' || e.key === '*' || e.key === '/') setOperator(operator(e.key))
-};
-
-function operator(keyboardOperator) {
-    if (keyboardOperator === '+') return '+'
-    if (keyboardOperator === '-') return '-'
-    if (keyboardOperator === '*') return '×'
-    if (keyboardOperator === '/') return '÷'
-};
-
-function add(a, b) {
-    return a + b
-};
-  
-function substract(a, b) {
-return a - b
-};
-
-function multiply(a, b) {
-return a * b
-};
-
-function divide(a, b) {
-return a / b
-};
-
-function operate(operator, a, b) {
-    a = Number(a)
-    b = Number(b)
-    switch (operator) {
-      case '+':
-        return add(a, b)
-      case '-':
-        return substract(a, b)
-      case '×':
-        return multiply(a, b)
-      case '÷':
-        if (b === 0) return null
-        else return divide(a, b)
-      default:
-        return null
+//keydown input
+$(window).keydown(function(e) {
+    var code = e.keyCode;
+    var kc = String.fromCharCode(e.keyCode);
+    
+    if (e.which == 53) {
+        if (e.shiftKey) {
+            {$('.percentage').addClass('triggerAnimation'), setTimeout(function () {
+                $('.percentage').removeClass('triggerAnimation');
+            }, 100)}
+            assignOperationFromKey(e)
+        }
+        else {
+            {$('.five').addClass('triggerAnimation'), setTimeout(function () {
+                $('.five').removeClass('triggerAnimation');
+            }, 100)}
+            assignNumberFromKey(e)
+        }
     }
+
+    else if (e.which == 56) {
+        if (e.shiftKey) {
+            {$('.multiply').addClass('triggerAnimation'), setTimeout(function () {
+                $('.multiply').removeClass('triggerAnimation');
+            }, 100)}
+            assignOperationFromKey(e)
+        }
+        else {
+            {$('.eight').addClass('triggerAnimation'), setTimeout(function () {
+                $('.eight').removeClass('triggerAnimation');
+            }, 100)}
+            assignNumberFromKey(e)
+        }
+    }
+
+    else if (e.which == 189) {
+        if (e.altKey) {
+            {$('.plusMinus').addClass('triggerAnimation'), setTimeout(function () {
+                $('.plusMinus').removeClass('triggerAnimation');
+            }, 100)}
+            assignOperationFromKey(e)
+        }
+        else {
+            {$('.subtract').addClass('triggerAnimation'), setTimeout(function () {
+                $('.subtract').removeClass('triggerAnimation');
+            }, 100)}
+            assignOperationFromKey(e)
+        }
+    }
+
+    else if (e.which == 187 || e.which == 13) {
+        if (e.shiftKey) {
+            {$('.add').addClass('triggerAnimation'), setTimeout(function () {
+                $('.add').removeClass('triggerAnimation');
+            }, 100)}
+            assignOperationFromKey(e)
+        }
+        else {
+            {$('.total').addClass('triggerAnimation'), setTimeout(function () {
+                $('.total').removeClass('triggerAnimation');
+            }, 100)}
+            assignOperationFromKey(e)
+        }
+    }
+
+    else if (e.which == 67 || e.which == 27) {
+        $('.clear').addClass('triggerAnimation'), setTimeout(function () {
+            $('.clear').removeClass('triggerAnimation');
+        }, 100)
+        assignOperationFromKey(e)
+    }
+
+    else if (e.which == 88){
+        $('.multiply').addClass('triggerAnimation'), setTimeout(function () {
+            $('.multiply').removeClass('triggerAnimation');
+        }, 100)
+        assignOperationFromKey(e)
+    }    
+
+    else if (e.which == 191){
+        $('.divide').addClass('triggerAnimation'), setTimeout(function () {
+            $('.divide').removeClass('triggerAnimation');
+        }, 100)
+        assignOperationFromKey(e)
+    }    
+    
+    else if (e.key >= 0 && e.key <= 9){
+        $("div[data-code='"+code+"']").addClass('triggerAnimation'), setTimeout(function () {
+            $("div[data-code='"+code+"']").removeClass('triggerAnimation');
+        }, 100)
+        assignNumberFromKey(e)
+    }
+    
+});
+
+//click input
+function onButtonPress (e) {
+    switch(e.target.getAttribute('data-button-type')) {
+        case "digit":
+            assignNumber(e),
+            (e.target.classList.add('triggerAnimation'), setTimeout(function () {
+                (e.target.classList.remove('triggerAnimation'));
+            }, 100));
+            break;
+        case "operator":
+            assignOperation(e),
+            (e.target.classList.add('triggerAnimation'), setTimeout(function () {
+                (e.target.classList.remove('triggerAnimation'));
+            }, 100));(e)
+            break;
+    }
+
+    render(e);
+}
+
+function assignNumber(e) {
+
+    if(evaluation.length <= 1) {
+        firstNumber = firstNumber == "0" 
+            ? e.target.getAttribute("data-value")
+            : firstNumber + e.target.getAttribute("data-value")
+
+        if(evaluation.length == 1) evaluation.shift();
+        evaluation.push(firstNumber)
+
+        result = firstNumber;
+        return;
+    }
+
+    if (evaluation.length >= 2) {
+        secondNumber = secondNumber == "0"
+            ? e.target.getAttribute("data-value")
+            : secondNumber + e.target.getAttribute("data-value");
+        if(evaluation.length == 3) evaluation.pop();
+        evaluation.push(secondNumber);
+        result = secondNumber;
+    }
+}
+
+function assignNumberFromKey(e) {
+    if(evaluation.length <= 1) {
+        firstNumber = firstNumber == "0" 
+            ? e.key
+            : firstNumber + e.key
+        
+        if(evaluation.length == 1) 
+        evaluation.shift();
+        evaluation.push(firstNumber)
+        result = firstNumber;
+        renderFromKey();
+        return;
+    }
+
+    if (evaluation.length >= 2) {
+        secondNumber = secondNumber == "0"
+            ? e.key
+            : secondNumber + e.key
+        if(evaluation.length == 3) evaluation.pop();
+        evaluation.push(secondNumber);
+        result = secondNumber;
+        renderFromKey();
+    }
+};
+
+function assignOperation(e) {
+    currentOperator = e.target.getAttribute('data-value');
+
+    // Exclusive operations that can be performed with one number, in the case of clear it can be executed even when the evaluation array is empty
+    if(currentOperator == "%" || currentOperator == "+/-" || currentOperator == "clear" || currentOperator == "=") return operate();
+
+    if(evaluation.length == 3) operate()
+    ;
+    if(evaluation.length == 2) evaluation.pop()
+    ;
+    evaluation.splice(1, 1, currentOperator);
+}
+
+function assignOperationFromKey(e) {
+    if (e.which == 53 && e.shiftKey) {
+        currentOperatorKey = "%"
+    };
+    if (e.which == 189 && e.altKey) {
+        currentOperatorKey = "+/-"
+    };
+    if (e.which == 27) {
+        currentOperatorKey = "clear"
+    };
+    if (e.which == 13 || (e.which == 187 && e.shiftKey)) {
+        currentOperatorKey = '='
+    }; 
+    if ((e.which == 56 && e.shiftKey) || e.which == 88) {
+        currentOperatorKey = '*'
+    };
+    if (e.which == 187 && e.shiftKey) {
+        currentOperatorKey = '+'
+    };
+    if (e.which == 189) {
+        currentOperatorKey = '-'
+    };
+    if (e.which == 191) {
+        currentOperatorKey = '/'
+    };
+
+    if(currentOperatorKey == '%' || currentOperatorKey == '+/-' || currentOperatorKey == 'clear' || currentOperatorKey == '=') return operateKey();
+    
+    if(evaluation.length == 3) operateKey(), console.log(evaluation);
+    if(evaluation.length == 2) evaluation.pop(),console.log(evaluation);
+    evaluation.splice(1, 1, currentOperatorKey), console.log(evaluation);
+}
+
+function operateKey() {
+    if (currentOperatorKey == "%" && evaluation.length) {
+        let number = parseInt(evaluation[evaluation.length - 1])
+        result =  (number / 100).toString();
+        evaluation.splice(evaluation.length - 1, 1, result);
+        return;
+    }
+
+    if(currentOperatorKey == "+/-" && evaluation.length) {
+        result = (evaluation[evaluation.length - 1] * -1).toString();
+        evaluation.splice(evaluation.length - 1, 1, result);
+        return;
+    }
+
+    if(currentOperatorKey == "clear") {
+        if(evaluation.length <= 2) {
+            firstNumber = "0";
+            evaluation = [];
+            result = "0";
+            return;
+        }
+        if(evaluation.length == 3) {
+            secondNumber = "0";
+            evaluation = [firstNumber.toString()]
+            result = firstNumber.toString();
+            return;
+        }
+    }
+
+    if(evaluation.length == 3) {
+        console.log (evaluation)
+        result = (eval(evaluation.join().replace(/,/g, ""))).toString();
+        firstNumber = result;
+        secondNumber = "0";
+        evaluation = [firstNumber]
+    }
+}
+
+function operate() { 
+    if(currentOperator == "%" && evaluation.length) {
+        let number = parseInt(evaluation[evaluation.length - 1])
+        result =  (number / 100).toString();
+        evaluation.splice(evaluation.length - 1, 1, result);
+        return;
+    }
+
+    if(currentOperator == "+/-" && evaluation.length) {
+        result = (evaluation[evaluation.length - 1] * -1).toString();
+        evaluation.splice(evaluation.length - 1, 1, result);
+        return;
+    }
+
+    if(currentOperator == "clear") {
+        if(evaluation.length <= 2) {
+            firstNumber = "0";
+            evaluation = [];
+            result = "0";
+            return;
+        }
+        if(evaluation.length == 3) {
+            secondNumber = "0";
+            evaluation = [firstNumber.toString()]
+            result = firstNumber.toString();
+            return;
+        }
+    }
+
+    if(evaluation.length == 3) {
+        console.log (evaluation)
+        result = (eval(evaluation.join().replace(/,/g, ""))).toString();
+        firstNumber = result;
+        secondNumber = "0";
+        evaluation = [firstNumber]
+    }
+}
+
+function render(e) {
+    const clearButton = document.querySelector('div[data-value="clear"]');
+
+    let newOperatorBtn = e.target;
+
+    let lastOperatorBtn = document.querySelector('.selectedOperation');
+
+    lastOperatorBtn ? lastOperatorBtn.classList.remove('selectedOperation') : null;
+    newOperatorBtn ? newOperatorBtn.classList.add('selectedOperation') : null;
+
+    // change screen's font-size
+    switch(result.toString().length) {
+        case 7:
+            screen.style.fontSize = "4.7rem"
+            break;
+        case 8:
+            screen.style.fontSize = "4.1rem"
+            break;
+        case 9: 
+            screen.style.fontSize = "3.65rem"
+            break
+    }
+
+    if(result.toString().length > 9) {
+        screen.textContent = parseFloat(result).toPrecision(3);
+    } else {
+        screen.textContent = result;
+    }
+
+    evaluation.length == "0"
+        ? clearButton.textContent = 'AC'
+        : clearButton.textContent = 'C'
+
+    
+}
+
+function renderFromKey(e) {
+    const clearButton = document.querySelector('div[data-value="clear"]');
+
+    switch(result.toString().length) {
+        case 7:
+            screen.style.fontSize = "4.7rem"
+            break;
+        case 8:
+            screen.style.fontSize = "4.1rem"
+            break;
+        case 9: 
+            screen.style.fontSize = "3.65rem"
+            break
+    }
+
+    if(result.toString().length > 9) {
+        screen.textContent = parseFloat(result).toPrecision(3);
+    } else {
+        screen.textContent = result;
+    }
+
+    evaluation.length == "0"
+    ? clearButton.textContent = 'AC'
+    : clearButton.textContent = 'C'
+
 };
