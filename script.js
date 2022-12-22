@@ -197,7 +197,7 @@ function assignOperationFromKey(e) {
     if (e.which == 27) {
         currentOperatorKey = 'clear'
     };
-    if (e.which == 13 || (e.which == 187 && e.shiftKey)) {
+    if (e.which == 13 || (e.which == 187)) {
         currentOperatorKey = '='
         $('div[data-button-type="operator"]').removeClass('selectedOperation')
     }; 
