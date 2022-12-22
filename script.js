@@ -124,7 +124,6 @@ function onButtonPress (e) {
             }, 100));(e)
             break;
     }
-
     render(e);
 }
 
@@ -296,9 +295,13 @@ function operate() {
             return;
         }
     }
-
-   
-
+    if(evaluation.length == 3) {
+        console.log (evaluation)
+        result = (eval(evaluation.join().replace(/,/g, ""))).toString();
+        firstNumber = result;
+        secondNumber = "0";
+        evaluation = [firstNumber]
+    }
 }
 
 function render(e) {
