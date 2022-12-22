@@ -192,30 +192,39 @@ function assignOperation(e) {
 
 function assignOperationFromKey(e) {
     if (e.which == 53 && e.shiftKey) {
-        currentOperatorKey = "%"
-    };
-    if (e.which == 189 && e.altKey) {
-        currentOperatorKey = "+/-"
+        currentOperatorKey = '%'
     };
     if (e.which == 27) {
-        currentOperatorKey = "clear"
+        currentOperatorKey = 'clear'
     };
     if (e.which == 13 || (e.which == 187 && e.shiftKey)) {
         currentOperatorKey = '='
+        $('div[data-button-type="operator"]').removeClass('selectedOperation')
     }; 
     if ((e.which == 56 && e.shiftKey) || e.which == 88) {
         currentOperatorKey = '*'
+        $('div[data-button-type="operator"]').removeClass('selectedOperation')
+        $('.multiply').addClass('selectedOperation')
     };
     if (e.which == 187 && e.shiftKey) {
         currentOperatorKey = '+'
+        $('div[data-button-type="operator"]').removeClass('selectedOperation')
+        $('.add').addClass('selectedOperation')
     };
     if (e.which == 189) {
         currentOperatorKey = '-'
+        $('div[data-button-type="operator"]').removeClass('selectedOperation')
+        $('.subtract').addClass('selectedOperation')
     };
     if (e.which == 191) {
         currentOperatorKey = '/'
+        $('div[data-button-type="operator"]').removeClass('selectedOperation')
+        $('.divide').addClass('selectedOperation')
     };
-
+    if (e.which == 189 && e.altKey) {
+        currentOperatorKey = '+/-'
+    };
+    
     if(currentOperatorKey == '%' || currentOperatorKey == '+/-' || currentOperatorKey == 'clear' || currentOperatorKey == '=') return operateKey();
     
     if(evaluation.length == 3) operateKey(), console.log(evaluation);
@@ -224,17 +233,15 @@ function assignOperationFromKey(e) {
 }
 
 function operateKey() {
-    if (currentOperatorKey == "%" && evaluation.length) {
+    if (currentOperatorKey == '%' && evaluation.length) {
         let number = parseInt(evaluation[evaluation.length - 1])
         result =  (number / 100).toString();
         evaluation.splice(evaluation.length - 1, 1, result);
-        return;
     }
 
-    if(currentOperatorKey == "+/-" && evaluation.length) {
+    if(currentOperatorKey == '+/-' && evaluation.length) {
         result = (evaluation[evaluation.length - 1] * -1).toString();
         evaluation.splice(evaluation.length - 1, 1, result);
-        return;
     }
 
     if(currentOperatorKey == "clear") {
@@ -242,13 +249,11 @@ function operateKey() {
             firstNumber = "0";
             evaluation = [];
             result = "0";
-            return;
         }
         if(evaluation.length == 3) {
             secondNumber = "0";
             evaluation = [firstNumber.toString()]
             result = firstNumber.toString();
-            return;
         }
     }
 
@@ -259,6 +264,8 @@ function operateKey() {
         secondNumber = "0";
         evaluation = [firstNumber]
     }
+    renderFromKey();
+    return;
 }
 
 function operate() { 
@@ -290,13 +297,8 @@ function operate() {
         }
     }
 
-    if(evaluation.length == 3) {
-        console.log (evaluation)
-        result = (eval(evaluation.join().replace(/,/g, ""))).toString();
-        firstNumber = result;
-        secondNumber = "0";
-        evaluation = [firstNumber]
-    }
+   
+
 }
 
 function render(e) {
@@ -361,3 +363,7 @@ function renderFromKey(e) {
     : clearButton.textContent = 'C'
 
 };
+
+//spamming percentage has issues that needs resolved
+//font-size needs to be more responsive. Esp on C or CA
+//When you hit enter multiple times can it trigger the previous operation?
